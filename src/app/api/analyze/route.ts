@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { extractBiomarkers } from "@/lib/claude";
 import { classify } from "@/lib/classify";
 import {
@@ -13,6 +14,7 @@ export const runtime = "nodejs";
 export const maxDuration = 60;
 
 const MAX_PDF_BYTES = 10 * 1024 * 1024;
+const DAILY_LIMIT = 10;
 
 const VALID_PHASES: readonly CyclePhase[] = [
   "folicular",
@@ -21,8 +23,45 @@ const VALID_PHASES: readonly CyclePhase[] = [
   "no_se",
 ] as const;
 
+type RateLimitMeta = {
+  lastAnalysisDate?: string;
+  analysesToday?: number;
+};
+
+const todayInMexicoCity = (): string =>
+  new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Mexico_City",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+
 export async function POST(request: NextRequest) {
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return Response.json(
+        { error: "No autenticada." },
+        { status: 401 },
+      );
+    }
+
+    const client = await clerkClient();
+    const user = await client.users.getUser(userId);
+    const meta = (user.privateMetadata ?? {}) as RateLimitMeta;
+    const today = todayInMexicoCity();
+    const usedToday =
+      meta.lastAnalysisDate === today ? meta.analysesToday ?? 0 : 0;
+
+    if (usedToday >= DAILY_LIMIT) {
+      return Response.json(
+        {
+          error: `Alcanzaste el límite de ${DAILY_LIMIT} análisis por día. Vuelve mañana o contacta a Calia Lab si necesitas más.`,
+        },
+        { status: 429 },
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get("pdf");
     const cyclePhaseRaw = formData.get("cyclePhase");
@@ -72,8 +111,6 @@ export async function POST(request: NextRequest) {
         labRange = { min: extracted.labMin, max: extracted.labMax };
       }
 
-      // For cycle-dependent markers, the relevant range is the one matching
-      // the user's selected phase (extracted by Claude into phaseRanges).
       let phaseRangeUsed: Range | null = null;
       if (
         b.cycleDependent &&
@@ -118,6 +155,15 @@ export async function POST(request: NextRequest) {
         clinicalRange:
           phaseRangeUsed ?? labRange ?? b.clinicalFallback ?? null,
       };
+    });
+
+    // Increment quota only after successful analysis
+    await client.users.updateUserMetadata(userId, {
+      privateMetadata: {
+        ...meta,
+        lastAnalysisDate: today,
+        analysesToday: usedToday + 1,
+      },
     });
 
     const body: AnalyzeResponse = { results, cyclePhase };
