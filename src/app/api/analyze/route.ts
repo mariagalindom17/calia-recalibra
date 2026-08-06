@@ -1,14 +1,19 @@
 import { NextRequest } from "next/server";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { extractBiomarkers } from "@/lib/claude";
-import { classify } from "@/lib/classify";
+import { classify, type PhaseRange } from "@/lib/classify";
 import {
   BIOMARKERS,
   type CyclePhase,
   type Range,
   type Zone,
 } from "@/lib/biomarkers";
-import type { AnalyzeResponse, AnalyzeResult } from "@/lib/api-types";
+import { toCanonicalValue, convertRange } from "@/lib/units";
+import type {
+  AnalyzeResponse,
+  AnalyzeResult,
+  PeRatioResult,
+} from "@/lib/api-types";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -36,14 +41,89 @@ const todayInMexicoCity = (): string =>
     day: "2-digit",
   }).format(new Date());
 
+/**
+ * Ratio Progesterona/Estradiol — solo se calcula en fase lútea, y se lee junto
+ * con los valores absolutos (no solo el número).
+ */
+function computePeRatio(
+  cyclePhase: CyclePhase,
+  progesterona: number | null,
+  estradiol: number | null,
+): PeRatioResult {
+  if (cyclePhase !== "lutea") {
+    return {
+      applicable: false,
+      value: null,
+      zone: "no_evaluable",
+      label: "No aplica",
+      reason: "El ratio P/E solo se calcula en fase lútea (≈ día 21).",
+    };
+  }
+  if (progesterona == null || estradiol == null || estradiol <= 0) {
+    return {
+      applicable: false,
+      value: null,
+      zone: "no_evaluable",
+      label: "No calculable",
+      reason:
+        "Faltan estradiol y/o progesterona con valor válido para calcular el ratio.",
+    };
+  }
+
+  const ratio = (progesterona * 1000) / estradiol;
+  const rounded = Math.round(ratio);
+
+  if (ratio >= 300 && ratio <= 500) {
+    return {
+      applicable: true,
+      value: rounded,
+      zone: "verde",
+      label: "Óptimo",
+      reason: `Ratio P/E ${rounded} (óptimo 300–500).`,
+    };
+  }
+  if (ratio >= 100 && ratio < 300) {
+    return {
+      applicable: true,
+      value: rounded,
+      zone: "amarillo",
+      label: "Funcional, por debajo del óptimo",
+      reason: `Ratio P/E ${rounded} (funcional 100–500; óptimo arriba de 300).`,
+    };
+  }
+  if (ratio > 500) {
+    return {
+      applicable: true,
+      value: rounded,
+      zone: "amarillo",
+      label: "Muy alto",
+      reason: `Ratio P/E ${rounded} (>500) — revísalo con tu médica.`,
+    };
+  }
+  // ratio < 100 → leer con los valores absolutos
+  if (estradiol >= 100) {
+    return {
+      applicable: true,
+      value: rounded,
+      zone: "amarillo",
+      label: "Dominancia estrogénica funcional",
+      reason: `Ratio P/E ${rounded} (<100) con estrógeno normal/alto: sugiere dominancia estrogénica funcional.`,
+    };
+  }
+  return {
+    applicable: true,
+    value: rounded,
+    zone: "amarillo",
+    label: "Posible agotamiento hormonal",
+    reason: `Ratio P/E ${rounded} (<100) con ambas hormonas bajas: sugiere agotamiento hormonal (se trata distinto a la dominancia).`,
+  };
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth();
     if (!userId) {
-      return Response.json(
-        { error: "No autenticada." },
-        { status: 401 },
-      );
+      return Response.json({ error: "No autenticada." }, { status: 401 });
     }
 
     const client = await clerkClient();
@@ -94,47 +174,61 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(await file.arrayBuffer());
     const extraction = await extractBiomarkers(buffer);
 
-    const extractedById = new Map(
-      extraction.markers.map((m) => [m.id, m]),
-    );
+    const extractedById = new Map(extraction.markers.map((m) => [m.id, m]));
+
+    // Guardamos los valores canónicos de estradiol y progesterona para el P/E.
+    let estradiolCanonical: number | null = null;
+    let progesteronaCanonical: number | null = null;
 
     const results: AnalyzeResult[] = BIOMARKERS.map((b) => {
       const extracted = extractedById.get(b.id);
       const found =
         extracted?.found === true && typeof extracted.value === "number";
 
-      let labRange: Range | null = null;
-      if (
-        extracted?.labMin != null &&
-        extracted?.labMax != null
-      ) {
-        labRange = { min: extracted.labMin, max: extracted.labMax };
+      // ── Conversión de unidades a canónica ──
+      let canonicalValue: number | null = null;
+      let conversionStatus: AnalyzeResult["conversionStatus"] = null;
+      if (found && extracted && extracted.value != null) {
+        const conv = toCanonicalValue(b.id, extracted.value, extracted.unit);
+        canonicalValue = conv.value;
+        conversionStatus = conv.conversion.status;
       }
 
-      let phaseRangeUsed: Range | null = null;
-      if (
-        b.cycleDependent &&
-        cyclePhase !== "no_se" &&
-        extracted?.phaseRanges
-      ) {
-        const matched = extracted.phaseRanges.find(
-          (p) => p.phase === cyclePhase,
-        );
-        if (matched) {
-          phaseRangeUsed = { min: matched.min, max: matched.max };
-        }
+      // Rango clínico del lab → convertir a canónica con el mismo factor.
+      let labRange: Range | null = null;
+      if (extracted?.labMin != null && extracted?.labMax != null) {
+        labRange = convertRange(b.id, extracted.unit, extracted.labMin, extracted.labMax);
       }
+
+      // Rangos por fase → convertir cada uno a canónica.
+      let phaseRanges: PhaseRange[] | undefined;
+      if (extracted?.phaseRanges) {
+        phaseRanges = extracted.phaseRanges.map((p) => {
+          const r = convertRange(b.id, extracted.unit, p.min, p.max);
+          return { phase: p.phase, min: r.min, max: r.max };
+        });
+      }
+
+      // Rango de la fase seleccionada (para mostrar como "rango clínico").
+      let phaseRangeUsed: Range | null = null;
+      if (b.cycleDependent && cyclePhase !== "no_se" && phaseRanges) {
+        const matched = phaseRanges.find((p) => p.phase === cyclePhase);
+        if (matched) phaseRangeUsed = { min: matched.min, max: matched.max };
+      }
+
+      if (b.id === "estradiol" && canonicalValue != null) estradiolCanonical = canonicalValue;
+      if (b.id === "progesterona" && canonicalValue != null) progesteronaCanonical = canonicalValue;
 
       let zone: Zone = "no_evaluable";
       let reason = "No reportado en el PDF";
 
-      if (found && extracted) {
+      if (found && canonicalValue != null) {
         const result = classify(
           b,
-          extracted.value!,
+          canonicalValue,
           labRange ?? undefined,
           cyclePhase,
-          extracted.phaseRanges ?? undefined,
+          phaseRanges,
         );
         zone = result.zone;
         reason = result.reason;
@@ -146,16 +240,19 @@ export async function POST(request: NextRequest) {
         group: b.group,
         unit: b.unit,
         found,
-        value: extracted?.value ?? null,
+        value: canonicalValue,
+        reportedValue: extracted?.value ?? null,
         reportedUnit: extracted?.unit ?? null,
+        conversionStatus,
         labRange,
         zone,
         reason,
         rcrcRange: b.rcrcRange ?? null,
-        clinicalRange:
-          phaseRangeUsed ?? labRange ?? b.clinicalFallback ?? null,
+        clinicalRange: phaseRangeUsed ?? labRange ?? b.clinicalFallback ?? null,
       };
     });
+
+    const pe = computePeRatio(cyclePhase, progesteronaCanonical, estradiolCanonical);
 
     // Increment quota only after successful analysis
     await client.users.updateUserMetadata(userId, {
@@ -166,11 +263,12 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const body: AnalyzeResponse = { results, cyclePhase };
+    const body: AnalyzeResponse = { results, cyclePhase, pe };
     return Response.json(body);
   } catch (e) {
     console.error("Error en /api/analyze:", e);
-    const msg = e instanceof Error ? e.message : "Error desconocido al analizar el PDF.";
+    const msg =
+      e instanceof Error ? e.message : "Error desconocido al analizar el PDF.";
     return Response.json({ error: msg }, { status: 500 });
   }
 }

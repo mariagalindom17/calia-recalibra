@@ -270,6 +270,24 @@ export default function Home() {
             </div>
           </div>
 
+          {results.cyclePhase === "lutea" && (
+            <div className="mb-10">
+              <h3 className="font-display text-lg text-primary-700 mb-3">
+                Ratio Progesterona / Estradiol (P/E)
+              </h3>
+              <div
+                className={`rounded-2xl border p-4 shadow-warm-sm ${ZONE_STYLES[results.pe.zone]}`}
+              >
+                <p className="text-sm font-medium">
+                  {results.pe.applicable && results.pe.value != null
+                    ? `${results.pe.value} · ${results.pe.label}`
+                    : results.pe.label}
+                </p>
+                <p className="text-xs mt-1 opacity-80">{results.pe.reason}</p>
+              </div>
+            </div>
+          )}
+
           {([1, 2, 3, 4, 5] as const).map((g) => {
             const rows = resultsByGroup(g);
             if (rows.length === 0) return null;
@@ -299,7 +317,18 @@ export default function Home() {
                             {r.name}
                           </td>
                           <td className="py-3 px-4 text-earth font-mono tabular-nums">
-                            {formatValue(r.value, r.reportedUnit ?? r.unit)}
+                            {formatValue(r.value, r.unit)}
+                            {r.conversionStatus === "converted" &&
+                              r.reportedValue != null && (
+                                <span className="block text-[10px] text-earth/50">
+                                  lab: {r.reportedValue} {r.reportedUnit}
+                                </span>
+                              )}
+                            {r.conversionStatus === "unknown" && (
+                              <span className="block text-[10px] text-peligro">
+                                unidad no reconocida ({r.reportedUnit}) — verifica
+                              </span>
+                            )}
                           </td>
                           <td className="py-3 px-4 text-earth/70 font-mono tabular-nums">
                             {formatRange(r.clinicalRange)}
