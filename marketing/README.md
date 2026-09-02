@@ -1,21 +1,18 @@
 # marketing/
 
-Carril de marketing de Calia Lab · Recalibra, separado del carril de producto.
+Taller local del carril de marketing. **El sistema vive en Notion**, no aquí.
 
-- `producto.md` — qué es y qué no es Recalibra, en términos de marketing.
-- `marca.md` — voz, paleta, tipografía y líneas rojas de claims.
-- `tablero.md` — temas abiertos, decisiones y preguntas. **Es la memoria.**
+- Cerebro, voz, pilares, calendario, radar y reglas →
+  [📣 Agente de Marketing · Cerebro · Calia Lab](https://app.notion.com/p/3bb139566f468140bfc8d830edebe291)
+- El agente local está en `.claude/agents/marketing.md`; se invoca con
+  `@marketing`. Corre en su propio contexto, separado del carril de producto.
 
-## Cómo trabajar aquí
+Archivos:
 
-El agente vive en `.claude/agents/marketing.md`. Para invocarlo en una sesión
-de Claude Code: `@marketing` o pídelo por nombre ("usa el agente de
-marketing"). Trabaja en su propio contexto, así que puedes llevar un tema de
-marketing en paralelo a uno de producto sin que se mezclen.
+- `herramienta-labs.md` — estado real del código vs. los Requerimientos v2 y
+  vs. lo que promete el copy. Es lo único que Notion no puede ver solo.
+- `tablero.md` — dudas y hallazgos del cruce Notion ↔ código.
 
-Regla de la casa: el agente de marketing **no edita `src/`**. Si una idea
-necesita un cambio en la app, lo anota en `tablero.md` bajo "Pide al agente de
-producto".
-
-Las piezas largas (landing, secuencias de email, planes de lanzamiento) se
-guardan como archivos aquí para poder iterarlas; lo corto se queda en el chat.
+Regla del cerebro que aplica aquí: el loop semanal (plan editorial, Radar,
+envíos de MailerLite) corre en **Cowork**, nunca en dos lugares a la vez. Este
+repo es para trabajo puntual y para el puente con el producto.
