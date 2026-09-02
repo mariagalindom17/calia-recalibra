@@ -8,12 +8,11 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 Este repo lleva dos hilos de trabajo en paralelo, cada uno con su agente:
 
-- **Producto / código** — `src/`, la app Next.js (la herramienta de pre-lectura
-  de labs de RECALIBRA). Es el carril por defecto.
+- **Producto / código** — `src/`, la app Next.js. Es el carril por defecto.
 - **Marketing** — `marketing/`, con su agente en `.claude/agents/marketing.md`.
-  Se invoca con `@marketing`. El sistema de marketing vive en Notion; este repo
-  es solo el taller y el puente con el producto. No edita `src/`; si necesita
-  un cambio de producto lo anota en `marketing/tablero.md`.
+  Se invoca con `@marketing`. Es solo el taller: el sistema vive en Notion y la
+  tarea corre en Cowork. Ve estrategia de marca, temas y piezas para redes, y
+  campañas de lanzamiento. No ve labs, ni lo clínico, ni el curso, ni `src/`.
 
 Si trabajas en el carril de producto, no edites `marketing/` sin que te lo
 pidan, y viceversa.
