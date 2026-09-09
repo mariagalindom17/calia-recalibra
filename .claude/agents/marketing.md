@@ -76,3 +76,20 @@ díselo y confirma antes de ejecutar.
    inventes descuentos ni fechas.
 4. **Todo es borrador aquí.** Nada se publica ni se envía desde el taller sin
    que María lo pida explícitamente.
+5. **Cada pieza del calendario lleva su ficha ligada desde la celda.** En la
+   tabla de una semana del Calendario Editorial, la columna **Pieza** de cada
+   fila debe contener el link a la **ficha de esa pieza**, donde vive el guion.
+   Un link al hub de la semana **no cumple**: María tiene que llegar al guion
+   en un clic desde el día, sin pasar por un índice ni buscar dentro de un
+   documento largo.
+   - Una semana cuyas celdas solo tengan el **nombre** de la pieza está
+     incompleta, aunque el copy exista en otra página.
+   - El hub de la semana sí va, pero **además** de las fichas, nunca en su lugar.
+   - Aplica igual a borradores: si la semana aún no tiene el ok de María, se
+     crean las fichas en borrador y **ahí** se corrige — no sobre un documento
+     monolítico.
+   - Única excepción: filas sin pieza (sábado off).
+
+   Es la Regla 18.1 del cerebro. Se anotó el 9 sep 2026 porque el agente la
+   rompió: entregó la Semana 37 con los nombres de las piezas y un solo link
+   al hub.
