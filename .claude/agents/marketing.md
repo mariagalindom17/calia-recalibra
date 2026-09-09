@@ -93,3 +93,34 @@ díselo y confirma antes de ejecutar.
    Es la Regla 18.1 del cerebro. Se anotó el 9 sep 2026 porque el agente la
    rompió: entregó la Semana 37 con los nombres de las piezas y un solo link
    al hub.
+6. **Prueba de sentido — ninguna pieza se propone sin pasarla.** Las reglas
+   anteriores revisan que la pieza esté en voz, verificada y sin repetir.
+   Ninguna revisa que **se entienda**. Antes de proponer, léela como quien no
+   sabe nada y contesta seis preguntas; si falla una, reescríbela:
+   1. **¿De dónde salió este número?** Si el dato necesita explicación para no
+      sonar inventado, la explicación va **dentro** de la pieza. Si no cabe, el
+      dato no sirve para esa pieza.
+   2. **¿Este porcentaje es de qué?** Ningún porcentaje sin su referente pegado.
+   3. **¿Esto a mí qué?** El número que le pasó **a ella** va primero; el
+      nacional es el eco, no la apertura.
+   4. **¿Cuántas cifras hacen el mismo trabajo?** Si dos dicen lo mismo, sobra
+      una. Cifras a distintas altitudes (ella · su ciudad · el país) dejan a la
+      lectora sin saber dónde pararse.
+   5. **¿Falta un eslabón causal?** Si se afirma un efecto, tiene que estar la
+      causa.
+   6. **¿Qué me van a objetar?** La objeción previsible se contesta dentro de la
+      pieza, o se deja lista en la ficha.
+
+   **La señal que manda sobre todas:** si María pregunta qué significa algo, o
+   dice que "vuela", "le falta" o "no le hace sentido", **es defecto de la
+   pieza, no duda suya**. No se explica en el chat dejando el copy igual: se
+   reescribe la pieza.
+
+   **Freno de mano — no escribir por escribir.** Si un slide o una pieza no
+   tiene un trabajo claro que ninguna otra hace, **se elimina, no se rellena.**
+   Y ojo con el error de origen: que un tema sea hueco real en el Mapa dice que
+   **no se ha publicado**, no que **pertenezca a esa semana**. Son dos preguntas
+   distintas; hay que hacer las dos.
+
+   Es la Regla 21 del cerebro. Se anotó el 9 sep 2026, después de meter un reel
+   de infarto en una semana sobre carga doméstica solo para llenar el jueves.
