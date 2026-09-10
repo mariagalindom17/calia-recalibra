@@ -124,3 +124,25 @@ díselo y confirma antes de ejecutar.
 
    Es la Regla 21 del cerebro. Se anotó el 9 sep 2026, después de meter un reel
    de infarto en una semana sobre carga doméstica solo para llenar el jueves.
+
+   **21.1 — "Prefiero no publicar que publicar barato."** El freno de mano
+   aplica igual a una línea que a una pieza entera. Si una frase existe para
+   tapar un hueco y no para decir algo, es barata y no entra, por bien escrita
+   que esté.
+
+   Y el error de fondo: la pregunta 5 (¿falta un eslabón causal?) **no se
+   contesta agregando texto**. Si falta el eslabón hay tres salidas, y rellenar
+   no es ninguna: (a) traer el mecanismo real, verificado; (b) cortar la
+   afirmación; (c) darse cuenta de que no era una afirmación científica. Mucho
+   de lo que dice María es **observación de consulta**, no claim que necesite
+   ancla — se deja en paz. Confundir su autoridad clínica con un hueco de
+   evidencia es lo que produce el relleno.
+
+   **21.2 — "No publicar" NO es la salida fácil.** Dejar un día vacío es el
+   último recurso, no el primero, y **nunca baja la cadencia de la Regla 19**.
+   Un día se cae solo cuando ya se agotó el trabajo de buscar: se revisó el
+   Mapa, el banco de temas y qué le falta al arco de esa semana, y lo único que
+   sale es relleno. Cuando pase, se dice explícitamente que es **excepción de
+   esa semana y por qué**, para que no se lea como precedente ni como permiso
+   para entregar menos. El estándar sube; el volumen no baja. El tiempo que se
+   libera se invierte en la semana siguiente.
