@@ -11,7 +11,7 @@ Primitives: lime, cobalt, coral, lilac, pink, cream, charcoal, white, all prefix
 | charcoal / coral | 5.85:1 | AA normal |
 | white / coral | 2.85:1 | FAIL even for large text; never use |
 | charcoal / white | 16.67:1 | AA/AAA normal |
-Note: approximate ratios; verify with automated contrast tooling before production. Avoid typography directly on photographs without an opaque or verified overlay.
+Contrast values below are recalculated using the WCAG relative-luminance equation; run automated checks on actual rendered states before production. Avoid typography directly on photographs without an opaque or verified overlay.
 ## Typography
 Display: Sora Bold/ExtraBold headlines only, not paragraph text. Body: Inter Regular 400 and Medium 500, forms, descriptions, articles and buttons. Accent: Sora Semibold for small labels, stickers and kickers only. Avoid additional font families.
 | Style | Size / line height | Role |
@@ -29,4 +29,4 @@ Display: Sora Bold/ExtraBold headlines only, not paragraph text. Body: Inter Reg
 ## Shape, strokes, tilt
 Radius 8 / 16 / 24 px; pill 999 px. Stroke 1 px hairline, 2 px control, 4 px expressive emphasis. Tilt decorative stickers -3° by default, never beyond ±6°. No tilt on body copy, form fields or clinical results.
 ## Composition
-Airy cream backgrounds, bold content blocks, one dominant hero visual, photoreal women with agency and motion (40–50 target), crisp typography. Limit expressive squiggle to one per surface; never over important text or face. Every icon is original SVG.
+Airy cream backgrounds, bold content blocks, one dominant hero visual, documentary-style women with agency in everyday settings (38–48 target), crisp typography. Limit expressive squiggle to one per surface; never over important text or face. Every icon is original SVG.

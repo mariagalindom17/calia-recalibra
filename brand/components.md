@@ -13,3 +13,6 @@ All classes defined in `assets/styles.css`; tokens in `assets/tokens.css`.
 | Footer | .footer | standard | Más energía para todo lo que viene |
 | Logo lockup | .brand-logo | standard | Calia Lab |
 Do: semantic HTML, visible focus, 48px controls, valid label associations. Don't: use stickers as buttons, convey clinical zones by color alone, use decorative curves on every section.
+
+## Product content principles
+For fatigue-related components, write “posibles factores” rather than “tu diagnóstico”; show progress as observed trends, not proof of causality. Cards should offer a single action plus a measurement, e.g. “Registra tu descanso durante siete días”. Error/empty states should preserve empathy and clearly distinguish missing data from normal results.
