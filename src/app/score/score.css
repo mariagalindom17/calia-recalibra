@@ -34,3 +34,16 @@
 @media(max-width:430px){.es-app{font-size:var(--text-sm)}.es-main{padding:var(--space-4)}.es-number{min-height:43px}.es-fatigue-item{padding:var(--space-3)}.es-scale-seven{gap:var(--space-1)}.es-btn{width:100%}.es-actions{flex-direction:column-reverse}.es-small-icon{width:64px;flex-basis:64px}}
 @media(prefers-reduced-motion:reduce){.es-number,.es-progress-track span{transition:none}.es-number.is-active{transform:none}}
 @media print{.es-top,.es-aside,.es-actions,.es-footer,.es-privacy,.es-progress-track,.es-progress-top{display:none!important}.es-layout{display:block;padding:0}.es-main{border:0;box-shadow:none;padding:0}.es-result-card{break-inside:avoid}.es-summary{break-inside:avoid}}
+
+/* Numeric energy score (descriptive Calia index, not a clinical scale) */
+.es-score-primary{background:var(--color-highlight);border:var(--stroke-medium) solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-6);margin-bottom:var(--space-6)}
+.es-score-primary-head{display:flex;justify-content:space-between;align-items:center;gap:var(--space-4)}
+.es-score-primary-head .es-icon{max-width:100px;flex:0 0 100px}
+.es-score-value{font:800 clamp(4rem,13vw,6.2rem)/1 var(--font-display);letter-spacing:-.085em;margin:var(--space-4) 0}
+.es-score-value span{font:700 var(--text-xl)/1 var(--font-display);letter-spacing:0}
+.es-score-bar{height:14px;margin:var(--space-4) 0}
+.es-score-primary p{max-width:570px;margin:var(--space-3) 0 0;font-size:var(--text-sm)}
+.es-score-primary .es-score-disclaimer{color:var(--color-muted);font-size:var(--text-xs)}
+.es-formula{background:var(--color-bg);padding:var(--space-4);border-radius:var(--radius-md);margin-top:var(--space-4);font-size:var(--text-sm)}
+.es-formula summary{cursor:pointer;font-weight:700}
+.es-formula p{margin-top:var(--space-3)}

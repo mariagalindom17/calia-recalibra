@@ -8,9 +8,8 @@ import {
   getSignal,
   fatigueTotal,
 } from "@/lib/energy-questionnaire";
+import { calculateEnergyScore } from "@/lib/energy-score";
 import "./score.css";
-
-type Moment = "inicio" | "dia90";
 
 const SCREENS = [
   {title:"Tu nivel de energía",icon:"energy",sub:"Empecemos con una sola pregunta."},
@@ -27,7 +26,6 @@ function Icon3D({name,size=96}:{name:string;size?:number}){
 
 export default function EnergyScorePage(){
   const [step,setStep]=useState(1);
-  const [moment,setMoment]=useState<Moment>("inicio");
   const [energy,setEnergy]=useState<number|null>(null);
   const [fatigue,setFatigue]=useState<(number|null)[]>(Array(9).fill(null));
   const [selected,setSelected]=useState<string[]>([]);
@@ -35,6 +33,7 @@ export default function EnergyScorePage(){
   const values=SCREENS[step-1];
   const total=fatigueTotal(fatigue);
   const validatedTotal=total??0;
+  const score=calculateEnergyScore(energy,total);
   const isSignificant=total!==null && total>=36;
   const answered=fatigue.filter(v=>v!==null).length;
 
@@ -55,7 +54,7 @@ export default function EnergyScorePage(){
     go(Math.min(step+1,6));
   };
   const reset=()=>{
-    setStep(1);setMoment("inicio");setEnergy(null);
+    setStep(1);setEnergy(null);
     setFatigue(Array(9).fill(null));setSelected([]);setError("");
     window.scrollTo({top:0,behavior:"smooth"});
   };
@@ -105,12 +104,6 @@ export default function EnergyScorePage(){
               </div>
               <div className="es-scale-labels"><span>Sin energía</span><span>Me sobra energía</span></div>
             </fieldset>
-            <fieldset className="es-fieldset es-moment">
-              <legend>¿Cuándo estás respondiendo?</legend>
-              <p className="es-hint">Está pensado para repetirse 90 días después de la evaluación inicial.</p>
-              <label className={`es-choice ${moment==="inicio"?"is-selected":""}`}><input type="radio" name="momento" checked={moment==="inicio"} onChange={()=>setMoment("inicio")}/> Mi evaluación inicial</label>
-              <label className={`es-choice ${moment==="dia90"?"is-selected":""}`}><input type="radio" name="momento" checked={moment==="dia90"} onChange={()=>setMoment("dia90")}/> Mi revisión a los 90 días</label>
-            </fieldset>
           </div>}
 
           {step===2&&<div className="es-body">
@@ -143,20 +136,32 @@ export default function EnergyScorePage(){
           </div>}
 
           {step===6&&<div className="es-results">
+            <article className="es-score-primary" aria-label="Tu score de energía Calia Lab">
+              <div className="es-score-primary-head"><span className="es-kicker">TU SCORE DE ENERGÍA</span><Icon3D name="energy" size={100}/></div>
+              <div className="es-score-value">{score}<span>/ 100</span></div>
+              <div className="es-bar es-score-bar" aria-hidden="true"><span style={{width:`${score??0}%`}}/></div>
+              <p><strong>Este es tu punto de partida.</strong> Combina tu energía percibida y cómo interfiere el cansancio con tus actividades.</p>
+              <p className="es-score-disclaimer">Índice orientativo diseñado por Calia Lab; no es una escala clínica validada, no identifica enfermedades ni determina la causa de tu cansancio.</p>
+            </article>
             <div className="es-results-grid">
               <article className="es-result-card es-result-energy">
-                <p className="es-kicker">ENERGÍA PERCIBIDA</p>
+                <p className="es-kicker">ENERGÍA QUE REPORTASTE</p>
                 <div className="es-big-number">{energy}<span>/ 10</span></div>
-                <div className="es-bar" aria-hidden="true"><span style={{width:`${(energy??0)*10}%`}}/></div>
-                <p>Es la calificación que tú elegiste, no un score médico calculado por la app.</p>
+                <p>Tu calificación personal de un día normal.</p>
               </article>
               <article className="es-result-card">
                 <p className="es-kicker">IMPACTO DEL CANSANCIO</p>
                 <div className="es-big-number">{validatedTotal}<span>/ 63</span></div>
                 <p><strong>{isSignificant?"Tus respuestas reflejan una interferencia importante del cansancio.":"Tu puntuación está por debajo del valor de referencia de 36."}</strong></p>
-                <p>Es la suma de tus 9 respuestas (de 9 a 63). El punto de referencia de 36 no establece un diagnóstico.</p>
+                <p>Suma de nueve respuestas (9 a 63). El valor de referencia de 36 no es un diagnóstico.</p>
               </article>
             </div>
+            <details className="es-formula">
+              <summary>¿Cómo se calculó mi score?</summary>
+              <p>El score va de 0 a 100. La mitad proviene de tu energía percibida del 1 al 10, convertida a una escala de 0 a 100. La otra mitad proviene de la suma de las nueve respuestas de fatiga (9 a 63), invertida para que menos interferencia signifique más energía. Redondeamos el resultado al número entero más cercano.</p>
+              <p>Fórmula: 50 × (energía − 1) / 9 + 50 × (63 − suma de fatiga) / 54.</p>
+              <p>Es una propuesta inicial de Calia Lab, no un instrumento médico validado. Requiere revisión y validación antes de usarlo para decisiones clínicas.</p>
+            </details>
             <article className="es-summary">
               <div className="es-summary-head"><Icon3D name="chart" size={64}/><div><span className="es-kicker">OBSERVACIONES</span><h3>Tu punto de partida</h3></div></div>
               <p>Marcaste <strong>{selected.length} de 21</strong> experiencias de los últimos tres meses. Se usan como pistas para conversar con un profesional, no para decirte de dónde viene tu cansancio.</p>
@@ -165,7 +170,7 @@ export default function EnergyScorePage(){
                 {selected.length?<ul>{selected.map(id=><li key={id}>{getSignal(id)?.label}</li>)}</ul>:<p>No marcaste ninguna de las opciones.</p>}
               </details>
               <div className="es-advice"><strong>¿Qué sigue?</strong><p>Observa tus cambios, considera tus antecedentes y consulta con un profesional si el cansancio persiste, limita tu vida diaria o tienes otros síntomas. Si notas falta de aire nueva o intensa, dolor de pecho o desmayo, busca atención médica inmediata.</p></div>
-              <p className="es-hint">Evaluación: {moment==="inicio"?"inicial":"revisión a los 90 días"}. Puedes repetir este cuestionario en 90 días y comparar tus puntuaciones, pero por ahora Calia no guarda respuestas ni hace comparaciones automáticas.</p>
+              <p className="es-hint">Puedes conservar una copia impresa de este resumen. Por ahora, el cuestionario no almacena respuestas ni ofrece seguimiento automático.</p>
             </article>
           </div>}
 

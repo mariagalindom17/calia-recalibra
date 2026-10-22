@@ -8,7 +8,7 @@ Order: promise → mechanism → es para ti si / no es para ti → why Calia exi
 Single CTA wording: **Descubre tu score de energía** in hero and closing card. Both navigate to the public Next.js route `/score`.
 
 ## Product integrity
-The mechanism is a proposed product journey: symptoms & context → possible factors → one action → observe trends. No scoring algorithm exists yet in this repository; no launch date or price has been confirmed. Copy explicitly says so.
+The mechanism is a proposed product journey: symptoms & context → possible factors → one action → observe trends. A transparent but unvalidated 0–100 Calia energy index is now defined in `src/lib/energy-score.ts`; no clinical validity is claimed. No launch date or price has been confirmed.
 The landing represents **Calia Lab as an independent brand**, not a founder-led personal profile. No unverified expert team or medical credential claims.
 
 ## Data capture
