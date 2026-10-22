@@ -51,3 +51,22 @@
 .lp-fit-list .lp-fit-quote span{min-width:0;overflow-wrap:break-word}
 .lp-honesty{margin-top:var(--space-2)}
 @media(max-width:380px){.lp-fit-list>p.lp-fit-quote{grid-template-columns:54px minmax(0,1fr);gap:var(--space-3);padding:var(--space-3)}.lp-fit-list .lp-quote-icon{width:54px;height:54px}.lp-fit-list>p.lp-fit-quote{min-height:78px}}
+
+/* Strong brand-line moment: the closing promise is a display headline, not a section label. */
+.lp-close-intro{min-width:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center}
+.lp-close-intro h2{
+  font-family:var(--font-display);
+  font-size:clamp(3.1rem,8.6vw,7.25rem);
+  font-weight:800;
+  line-height:.99;
+  letter-spacing:-.075em;
+  max-width:900px;
+  margin:var(--space-6) 0 var(--space-8);
+  text-wrap:balance;
+}
+.lp-close-intro>.kicker{background:var(--color-highlight);color:var(--color-text);padding:var(--space-2) var(--space-3);border-radius:var(--radius-pill)}
+.lp-close-intro>p:not(.lp-footnote){font-size:clamp(var(--text-base),1.8vw,var(--text-lg));line-height:1.5;max-width:570px}
+@media(min-width:950px){
+  .lp-close{grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);align-items:center}
+  .lp-close-intro h2{font-size:clamp(4rem,6.1vw,6.75rem)}
+}
