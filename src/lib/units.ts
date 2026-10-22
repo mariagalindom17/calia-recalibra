@@ -52,7 +52,7 @@ export function normalizeUnit(raw: string | null | undefined): string {
 const ALT_UNITS: Record<string, Record<string, number>> = {
   // ── Hormonal sexual ──
   testosterona_total: { "ng/ml": 100 }, // 1 ng/mL = 100 ng/dL
-  testosterona_libre: { "pg/ml": 0.1 }, // pg/mL ÷ 10
+  testosterona_libre: { "ng/dl": 10, "ng/l": 1 }, // 1 ng/dL = 10 pg/mL; pg/mL = ng/L
   estradiol: { "pmol/l": 1 / 3.671 },
   progesterona: { "nmol/l": 1 / 3.18 },
   dhea_s: { "umol/l": 1 / 0.02714, "ug/ml": 100 },
