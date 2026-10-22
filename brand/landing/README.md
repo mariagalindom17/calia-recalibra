@@ -27,3 +27,7 @@ Reuses existing Sora/Inter, brand tokens and buttons/cards/kickers/FAQ/field/for
 ## 3D and questionnaire integration
 The user chose glossy icons for content and flat symbols for controls. The four mechanism cards, founder-alternative story tile, and final CTA use the authored glossy SVG icons in `brand/assets/img/icons/3d/`. Corresponding Next.js static assets live in `public/brand/icons-3d/`. The FAQ title is **Lo que siempre nos preguntan.**
 Questionnaire: `src/app/score/page.tsx`; neutral user-facing symptoms, exploratory internal categories and non-diagnostic results. No data are persisted. The static landing HTML must still be served by a deployment before its CTA can become accessible to visitors.
+
+## Icon placement audit (Oct 2026)
+Five `Es para ti si` quote cards now each include their own matching glossy 3D icon: moon (sleep), flask (lab results), dumbbell (exercise), brain (mental overload), chart (seeing progress). The three tiny icon labels inside the demo phone deliberately use the existing **flat** stickers (sleep, energy, movement), and the four mechanism icons correspond to questionnaire/connecting clues/choosing an action/tracking progress. Original palette only; `landing.css` fixes icon size, vertical alignment, wrapping, small mobile grids and prevents stretched imagery.
+Validate asset paths and presence of all five quote icons locally via `python brand/tools/check_landing_assets.py`.
