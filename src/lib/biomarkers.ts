@@ -124,7 +124,7 @@ export const BIOMARKERS: Biomarker[] = [
     name: "Testosterona libre",
     synonyms: ["T libre", "TL", "Free T", "Testosterona libre calculada"],
     group: 1,
-    unit: "ng/dL",
+    unit: "pg/mL",
     rcrcRange: { min: 1.1, max: 6.4 },
   },
 
