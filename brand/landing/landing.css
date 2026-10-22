@@ -29,3 +29,14 @@
 @media(min-width:620px){.lp-page{padding:0 var(--space-8)}.lp-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.lp-hero{grid-template-columns:1.08fr .92fr}.lp-hero-visual{min-height:520px}.lp-close{padding:var(--space-12)}}
 @media(min-width:950px){.lp-steps{grid-template-columns:repeat(4,minmax(0,1fr))}.lp-fit{grid-template-columns:.9fr 1.1fr;gap:var(--space-12);padding:var(--space-12)}.lp-founder{grid-template-columns:.75fr 1.25fr;gap:var(--space-12)}.lp-close{grid-template-columns:1fr 1fr;gap:var(--space-12)}.lp-section{padding-top:var(--space-24);padding-bottom:var(--space-24)}}
 @media(prefers-reduced-motion:reduce){.lp-demo,.lp-floating-sticker{transform:none}}
+
+/* Glossy dimensional icons accent the sections; small functional UI stays flat. */
+.lp-step .lp-step-icon{width:88px;height:88px;object-fit:contain;margin:var(--space-2) 0 0;filter:drop-shadow(0 5px 7px color-mix(in srgb,var(--color-text) 10%,transparent))}
+.lp-founder-mark{overflow:hidden;background:var(--color-play);isolation:isolate}
+.lp-founder-mark .lp-story-icon{position:absolute;width:clamp(110px,23vw,165px);height:auto;filter:drop-shadow(0 7px 7px color-mix(in srgb,var(--color-text) 12%,transparent))}
+.lp-founder-mark .lp-story-icon--one{top:12%;left:7%;right:auto;transform:rotate(-11deg)}
+.lp-founder-mark .lp-story-icon--two{top:5%;right:4%;left:auto;transform:rotate(14deg)}
+.lp-founder-mark .lp-story-icon--three{bottom:0;top:auto;left:30%;right:auto;transform:rotate(-3deg)}
+.lp-close-icon{width:100px;height:100px;object-fit:contain;display:block;margin-top:var(--space-4)}
+.lp-signup p{line-height:1.6}
+.lp-signup .lp-main-cta{margin:var(--space-4) 0;max-width:none}
