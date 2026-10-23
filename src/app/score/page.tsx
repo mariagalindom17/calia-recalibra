@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import Image from "next/image";
 import {
   FATIGUE_ITEMS,
@@ -26,6 +26,17 @@ function Icon3D({name,size=96}:{name:string;size?:number}){
 
 export default function EnergyScorePage(){
   const [step,setStep]=useState(1);
+  const [registered,setRegistered]=useState(false);
+  const [leadName,setLeadName]=useState("");
+  const [leadEmail,setLeadEmail]=useState("");
+  const [leadConsent,setLeadConsent]=useState(false);
+  const [leadHoneypot,setLeadHoneypot]=useState("");
+  const [leadError,setLeadError]=useState("");
+  const [leadSending,setLeadSending]=useState(false);
+  // We cannot collect personal information before the actual privacy notice is published.
+  const privacyNotice=process.env.NEXT_PUBLIC_CALIA_PRIVACY_URL;
+  const privacyReady=typeof privacyNotice==="string" &&
+    (privacyNotice.startsWith("https://") || (privacyNotice.startsWith("/") && !privacyNotice.startsWith("//")));
   const [energy,setEnergy]=useState<number|null>(null);
   const [fatigue,setFatigue]=useState<(number|null)[]>(Array(9).fill(null));
   const [selected,setSelected]=useState<string[]>([]);
@@ -36,6 +47,42 @@ export default function EnergyScorePage(){
   const score=calculateEnergyScore(energy,total);
   const isSignificant=total!==null && total>=36;
   const answered=fatigue.filter(v=>v!==null).length;
+
+  // Do not unlock questions unless our server confirms receipt of the required lead.
+  // No symptom answers are included in this request or persisted by this flow.
+  const registerLead=async (event:FormEvent<HTMLFormElement>)=>{
+    event.preventDefault();
+    if(leadSending || registered)return;
+    const nombre=leadName.trim();
+    const email=leadEmail.trim().toLowerCase();
+    if(nombre.length<2 || nombre.length>80){
+      setLeadError("Escribe tu nombre (al menos dos caracteres) para continuar.");
+      return;
+    }
+    if(email.length>254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      setLeadError("Revisa tu correo electrónico para continuar.");
+      return;
+    }
+    if(!leadConsent){setLeadError("Para continuar necesitamos tu autorización para registrar tus datos.");return;}
+    if(!privacyReady){setLeadError("El registro todavía no está habilitado. Falta publicar el aviso de privacidad.");return;}
+    setLeadError("");
+    setLeadSending(true);
+    try{
+      const response=await fetch("/api/calia-interest",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        credentials:"same-origin",
+        cache:"no-store",
+        body:JSON.stringify({nombre,email,consentimiento:true,company:leadHoneypot,fuente:"calia-score"})
+      });
+      const payload=await response.json().catch(()=>({}));
+      if(!response.ok || payload.ok!==true)throw new Error(payload.error || "No pudimos registrar tus datos. Inténtalo de nuevo.");
+      setRegistered(true);
+      window.scrollTo({top:0,behavior:"smooth"});
+    }catch(err){
+      setLeadError(err instanceof Error?err.message:"No pudimos enviar tus datos. Inténtalo más tarde.");
+    }finally{setLeadSending(false);}
+  };
 
   const go=(to:number)=>{
     setError("");
@@ -80,6 +127,43 @@ export default function EnergyScorePage(){
           </div>
         </aside>
         <section className="es-main" aria-labelledby="es-screen-heading">
+          {!registered ? <div className="es-lead-step">
+            <div className="es-lead-heading">
+              <span className="es-kicker">ANTES DE EMPEZAR</span>
+              <Icon3D name="clipboard" size={106}/>
+              <h2 id="es-screen-heading">Primero, queremos conocerte.</h2>
+              <p>Déjanos tu nombre y correo electrónico para comenzar el cuestionario de energía de Calia Lab.</p>
+            </div>
+            <form className="es-lead-form" onSubmit={registerLead}>
+              <label htmlFor="es-lead-name">Nombre <span aria-hidden="true">*</span></label>
+              <input id="es-lead-name" name="nombre" value={leadName}
+                onChange={e=>{setLeadName(e.target.value);setLeadError("");}} autoComplete="name"
+                placeholder="Tu nombre" minLength={2} maxLength={80} required/>
+              <label htmlFor="es-lead-email">Correo electrónico <span aria-hidden="true">*</span></label>
+              <input id="es-lead-email" name="email" type="email" value={leadEmail}
+                onChange={e=>{setLeadEmail(e.target.value);setLeadError("");}} autoComplete="email"
+                inputMode="email" placeholder="tu@correo.com" maxLength={254} required/>
+              <label className="es-lead-consent" htmlFor="es-lead-consent">
+                <input id="es-lead-consent" type="checkbox" checked={leadConsent}
+                  onChange={e=>{setLeadConsent(e.target.checked);setLeadError("");}} required/>
+                <span>Autorizo a Calia Lab a registrar mi nombre y correo para gestionar mi solicitud y contactarme en relación con la evaluación.
+                  {privacyReady ? <> Consulta el <a href={privacyNotice} target="_blank" rel="noopener noreferrer">aviso de privacidad</a>.</> : null}
+                </span>
+              </label>
+              <div className="es-hp" aria-hidden="true">
+                <label htmlFor="es-lead-company">Empresa</label>
+                <input id="es-lead-company" tabIndex={-1} autoComplete="off" value={leadHoneypot}
+                  onChange={e=>setLeadHoneypot(e.target.value)}/>
+              </div>
+              {leadError&&<p className="es-error" role="alert">{leadError}</p>}
+              {!privacyReady&&<p className="es-lead-warning" role="status">Formulario en preparación: antes de activarlo hay que publicar el aviso de privacidad y conectar el destino de registros.</p>}
+              <button className="es-btn es-btn-primary es-lead-submit" type="submit"
+                disabled={leadSending || !privacyReady}>
+                {leadSending?"Registrando…":"Guardar mis datos y comenzar →"}
+              </button>
+              <p className="es-hint">Nombre y correo son obligatorios. Las respuestas del cuestionario permanecen en tu navegador; no se envían con este registro.</p>
+            </form>
+          </div> : <>
           <div className="es-progress-top">
             <span>PASO {step} DE 6</span>
             <span>{Math.round(step/6*100)}%</span>
@@ -180,7 +264,8 @@ export default function EnergyScorePage(){
             {step<6?<button type="button" className="es-btn es-btn-primary" onClick={next}>{step===5?"Ver mi resumen":"Siguiente"} <span aria-hidden="true">→</span></button>:
               <><button type="button" className="es-btn es-btn-secondary" onClick={reset}>Empezar de nuevo</button><button type="button" className="es-btn es-btn-primary" onClick={()=>window.print()}>Imprimir mi resumen ↗</button></>}
           </div>
-          <p className="es-privacy">Tus respuestas permanecen en este navegador mientras esta página esté abierta. No se envían ni almacenan en los servidores de Calia Lab.</p>
+          <p className="es-privacy">Tu nombre y correo se envían únicamente al sistema de registro al comenzar. Tus respuestas sobre salud permanecen en este navegador y no se envían ni guardan en los servidores de Calia Lab.</p>
+          </>}
         </section>
       </div>
       <footer className="es-footer"><strong>Calia Lab</strong><span>Más energía para todo lo que viene.</span></footer>

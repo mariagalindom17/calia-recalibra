@@ -31,3 +31,9 @@ Questionnaire: `src/app/score/page.tsx`; neutral user-facing symptoms, explorato
 ## Icon placement audit (Oct 2026)
 Five `Es para ti si` quote cards now each include their own matching glossy 3D icon: moon (sleep), flask (lab results), dumbbell (exercise), brain (mental overload), chart (seeing progress). The three tiny icon labels inside the demo phone deliberately use the existing **flat** stickers (sleep, energy, movement), and the four mechanism icons correspond to questionnaire/connecting clues/choosing an action/tracking progress. Original palette only; `landing.css` fixes icon size, vertical alignment, wrapping, small mobile grids and prevents stretched imagery.
 Validate asset paths and presence of all five quote icons locally via `python brand/tools/check_landing_assets.py`.
+
+## Founder-alternative tile layout fix
+The three glossy icons in the pink `Por qué existe Calia` panel now each occupy an equal grid column, with visible spacing, no absolute positioning, and no `overflow:hidden` crop. Their intrinsic aspect ratios are preserved with `object-fit:contain`.
+
+## Mandatory registration before questionnaire
+The `/score` route starts with name + email and an explicit processing-consent checkbox. The questions unlock only when the existing server-side leads endpoint confirms receipt. Until the privacy notice and webhook are configured, the gate is disabled and clearly states that capture is not yet active; no fabricated registrations or saving of health symptoms.

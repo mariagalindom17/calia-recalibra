@@ -47,3 +47,28 @@
 .es-formula{background:var(--color-bg);padding:var(--space-4);border-radius:var(--radius-md);margin-top:var(--space-4);font-size:var(--text-sm)}
 .es-formula summary{cursor:pointer;font-weight:700}
 .es-formula p{margin-top:var(--space-3)}
+
+/* Required lead capture before step 1: only the CTA changes state after confirmed receipt. */
+.es-lead-step{max-width:640px;margin:0 auto}
+.es-lead-heading{display:grid;justify-items:start;gap:var(--space-3);margin-bottom:var(--space-8)}
+.es-lead-heading .es-icon{width:106px;height:auto;justify-self:center}
+.es-lead-heading h2{font-size:clamp(var(--text-2xl),4vw,var(--text-3xl));margin:0}
+.es-lead-heading p{margin:0;line-height:1.6;color:var(--color-muted)}
+.es-lead-form{display:grid;gap:var(--space-3)}
+.es-lead-form>label:not(.es-lead-consent){font-weight:700;font-size:var(--text-sm)}
+.es-lead-form>label>span[aria-hidden="true"]{color:var(--color-accent)}
+.es-lead-form>input{width:100%;height:54px;padding:var(--space-3) var(--space-4);
+ border:var(--stroke-medium) solid var(--color-border);border-radius:var(--radius-md);
+ background:var(--color-surface);color:var(--color-text);font:inherit}
+.es-lead-form>input:focus-visible{outline:var(--stroke-bold) solid var(--color-focus);outline-offset:2px}
+.es-lead-consent{display:flex;align-items:flex-start;gap:var(--space-3);
+ font-size:var(--text-sm);line-height:1.55;margin:var(--space-4) 0 0}
+.es-lead-consent input{flex:0 0 21px;width:21px;height:21px;margin-top:2px;accent-color:var(--color-action)}
+.es-lead-consent a{font-weight:700;text-decoration:underline;text-underline-offset:2px}
+.es-lead-warning{padding:var(--space-4);border-radius:var(--radius-md);
+ background:var(--color-bg);border-left:var(--stroke-bold) solid var(--color-accent);font-size:var(--text-sm)}
+.es-lead-submit{width:100%;margin-top:var(--space-3)}
+.es-lead-submit:disabled{cursor:not-allowed;opacity:.54}
+.es-lead-form>.es-hint{text-align:center;line-height:1.5}
+.es-hp{display:none}
+@media(min-width:620px){.es-lead-heading{justify-items:start}.es-lead-heading .es-icon{justify-self:start}}

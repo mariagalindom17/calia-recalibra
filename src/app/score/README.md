@@ -14,3 +14,10 @@ The proposed Calia **energy score is explicitly defined**, but is NOT a clinical
 All answers live **only in React client state** (no network calls, cookies, localStorage, database, logging, or API submission). Closing or refreshing loses them; print produces a local copy. There is no initial/90-day selection or automated comparisons.
 
 The six glossy dimensional SVG illustrations live under `public/brand/icons-3d/` and are copied to `brand/assets/img/icons/3d/` for brand-system use. Navigation buttons/scales remain flat. All colors use the established Calia palette and CSS token import; the main analysis app is unchanged. The Clerk middleware only makes `/score` public. Consent, accessibility and medical copy should be reviewed before public launch.
+
+## Lead gate before questions
+The questionnaire now starts with a mandatory **name and email** form and a required affirmative checkbox authorizing use of those details for registering/contacting the lead. Its `/api/calia-interest` POST must return `{ok:true}` before six-step questions are unlocked. The name must contain 2–80 characters, and the email must be valid. A POST error, invalid fields or missing privacy notice blocks entry; success is not simulated.
+
+For real capture, configure `CALIA_LEADS_ENABLED=true`, `CALIA_LEADS_WEBHOOK_URL` (trusted HTTPS server-side capture destination) and `NEXT_PUBLIC_CALIA_PRIVACY_URL` (published, reviewed privacy notice). No public collection is enabled by default; before configuring these variables the form is visibly disabled. The endpoint stores neither questionnaire answers nor health information.
+
+The six questionnaire steps start after the lead gate and are unchanged. Page refresh returns to the gate; repeated submissions are possible unless the receiving CRM deduplicates. Test submissions and spam/rate protections should be reviewed before production.

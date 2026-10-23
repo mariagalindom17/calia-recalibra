@@ -37,12 +37,12 @@ export async function POST(request: Request) {
   }
   const nombre = typeof fields.nombre === "string" ? fields.nombre.trim() : "";
   const email = typeof fields.email === "string" ? fields.email.trim().toLowerCase() : "";
-  if (nombre.length > 80 || !EMAIL.test(email) || email.length > 254 || fields.consentimiento !== true) {
-    return Response.json({error:"Verifica tu correo y consentimiento."},{status:400});
+  if (nombre.length < 2 || nombre.length > 80 || !EMAIL.test(email) || email.length > 254 || fields.consentimiento !== true) {
+    return Response.json({error:"Verifica tu nombre, correo y autorización para registrar tus datos."},{status:400});
   }
   // Fail closed until privacy notice, webhook and operational review are complete.
   const url = process.env.CALIA_LEADS_WEBHOOK_URL;
-  if (process.env.CALIA_LEADS_ENABLED !== "true" || !url) {
+  if (process.env.CALIA_LEADS_ENABLED !== "true" || !url || !process.env.NEXT_PUBLIC_CALIA_PRIVACY_URL) {
     return Response.json({error:"El registro todavía no está habilitado. No se guardaron tus datos."},{status:503});
   }
   let webhook: URL;
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({
-        fuente:"calia-lab-landing",
+        fuente:"calia-score-formulario",
         nombre,email,
         consentimiento:true,
         fecha:new Date().toISOString(),
