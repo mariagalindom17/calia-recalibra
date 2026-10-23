@@ -37,3 +37,6 @@ The three glossy icons in the pink `Por qué existe Calia` panel now each occupy
 
 ## Mandatory registration before questionnaire
 The `/score` route starts with name + email and an explicit processing-consent checkbox. The questions unlock only when the existing server-side leads endpoint confirms receipt. Until the privacy notice and webhook are configured, the gate is disabled and clearly states that capture is not yet active; no fabricated registrations or saving of health symptoms.
+
+## Functional static shareable demo (Oct 2026)
+Both CTA links in `brand/landing/index.html` now open `./score/`, a working six-step browser-only questionnaire at `brand/landing/score/index.html` with a required name+email intro, 1–10 self-rated energy, 9 fatigue items (1–7), three mixed pages of 21 neutral symptoms, and the transparent provisional Calia 0–100 score. Navigation and calculation work in a browser and Netlify static preview. **Preview input, including name/email, is not saved, sent or stored.** Do NOT call this a working Google Sheets integration or live lead collection. The production Next.js `/score` route retains its server-confirmed lead gate until a reviewed privacy notice and real capture destination exist.
